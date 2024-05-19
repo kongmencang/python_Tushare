@@ -6,3 +6,6 @@ PROJECT_URL = os.path.abspath('.')
 
 INFO_PRIMITIVE_URL = PROJECT_URL + os.sep + "info" + os.sep + "primitive_info"
 INFO_ANALYES_URL = PROJECT_URL + os.sep + "info" + os.sep + "analyes_info"
+
+
+PERIOD=["20191231"]
