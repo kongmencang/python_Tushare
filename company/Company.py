@@ -3,6 +3,7 @@ import os
 import tushare as ts
 
 from config import INFO_PRIMITIVE_URL
+from tools.FileTools import FileTools
 
 
 class Company():
@@ -36,9 +37,10 @@ class Company():
             "business_scope",
             "main_business"
         ])
-
-        df.to_excel(INFO_PRIMITIVE_URL+os.sep+f"{self.ts_code}#base_info.xlsx")
-        return INFO_PRIMITIVE_URL+os.sep+f"{self.ts_code}#base_info.xlsx"
+        dir_path = INFO_PRIMITIVE_URL + os.sep + f"{self.ts_code}"
+        FileTools.make_dir(dir_path)
+        df.to_excel( dir_path +os.sep+f"{self.ts_code}#base_info.xlsx")
+        return  dir_path +os.sep+f"{self.ts_code}#base_info.xlsx"
 
     def get_profit_info_to_excel(self,ann_date="", f_ann_date="", start_date="", end_date="", period="", report_type="",
                                  comp_type="", is_calc="", limit="", offset=""):
@@ -150,9 +152,10 @@ class Company():
             "oth_income",
             "net_after_nr_lp_correct"
         ])
-
-        df.to_excel(INFO_PRIMITIVE_URL + os.sep + f"{self.ts_code}#{period}#profit_info.xlsx")
-        return INFO_PRIMITIVE_URL + os.sep + f"{self.ts_code}#{period}#profit_info.xlsx"
+        dir_path = INFO_PRIMITIVE_URL + os.sep + f"{self.ts_code}"
+        FileTools.make_dir(dir_path)
+        df.to_excel(dir_path +os.sep + f"{self.ts_code}#{period}#profit_info.xlsx")
+        return dir_path +os.sep + f"{self.ts_code}#{period}#profit_info.xlsx"
 
     def get_balance_info_to_excel(self, ann_date="", f_ann_date="", start_date="", end_date="", period="",
                                      report_type="", comp_type="", is_calc="", limit="", offset=""):
@@ -323,6 +326,8 @@ class Company():
                 "update_flag"
             ])
 
-            df.to_excel(INFO_PRIMITIVE_URL + os.sep + f"{self.ts_code}#{period}#balance_info.xlsx")
-            return INFO_PRIMITIVE_URL + os.sep + f"{self.ts_code}#{period}#balance_info.xlsx"
+            dir_path =INFO_PRIMITIVE_URL + os.sep + f"{self.ts_code}"
+            FileTools.make_dir(dir_path)
+            df.to_excel(dir_path +os.sep + f"{self.ts_code}#{period}#balance_info.xlsx")
+            return dir_path +os.sep + f"{self.ts_code}#{period}#balance_info.xlsx"
 
