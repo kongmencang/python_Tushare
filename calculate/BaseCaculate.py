@@ -1,6 +1,7 @@
 import os
 
 import pandas as pd
+from numpy import nan
 
 from company.Company import Company
 from config import INFO_ANALYES_URL
@@ -214,3 +215,35 @@ class BaseCaculate(Company):
         FileTools.make_dir(dir_path)
         df.to_excel(dir_path + os.sep + f"{self.ts_code}#{args[0]}.xlsx")
         return dic
+
+
+    """
+    评分
+    入参为基本运算返回的字典
+    返回值为字典
+    如{'存货周转率': 100.0, '总资产周转率': 50.0, '应收账款周转率': 0.0}
+    """
+    def get_scire_info(self,data):
+        num_columns = len(list(data.values())[0]) - 1
+        result = [[] for _ in range(num_columns)]
+
+        # 遍历每个日期的子字典
+        for key in data.keys():
+            sub_dict = data[key]
+            values = list(sub_dict.values())[1:]
+            for i, value in enumerate(values):
+                result[i].append(value)
+        keys = list(data[key].keys())[1:]
+        ans = []
+        for i in result:
+            n = 0
+            for j in range(len(i) - 1):
+                if i[j] > i[j + 1] or i[j] == nan:
+                    n = n + 1
+            n = n / 4 * 100
+            ans.append(n)
+        dic = {}
+        for i, key in enumerate(keys):
+            dic[key] = ans[i]
+        return dic
+

@@ -21,7 +21,8 @@ class Calculate(BaseCaculate):
     def get_analyse_gross_margin_to_excel(self,period):
         args=['毛利率',"revenue","oper_cost"]
         return self.profit_sheet_two_agrs_reduce_division_to_excel(period,args)
-        return dic
+
+
     """
     生成 营业利润率报表
     period 报表时间列表，只传入一个的情况下，获取五年内数据
@@ -74,6 +75,7 @@ class Calculate(BaseCaculate):
     营业能力指标组合方法
     """
     def get_profitability_metrics_to_excel(self,period):
+        indicators={}
         if len(period) == 1:
             for i in range(4):
                 period.append(str(int(period[i]) - 10000))
@@ -98,11 +100,19 @@ class Calculate(BaseCaculate):
 
         for i in range(len(period)):
             df.loc[i] =[self.ts_code,period[i],gross_margin[period[i]],operating_margin[period[i]],profit_margin[period[i]],ROE[period[i]],ROA[period[i]],EBIT[period[i]]]
-
+            indicators[period[i]] = {
+                'TS股票代码': self.ts_code,
+                '毛利率': gross_margin[period[i]],
+                '营业利润率': operating_margin[period[i]],
+                '净利润率': profit_margin[period[i]],
+                'ROE': ROE[period[i]],
+                'ROA': ROA[period[i]],
+                'EBIT': EBIT[period[i]]
+            }
         dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}"
         FileTools.make_dir(dir_path)
         df.to_excel(dir_path + os.sep + f"{self.ts_code}#营业能力指标.xlsx")
-
+        return indicators
     """
     运营能力指标
     """
@@ -135,6 +145,7 @@ class Calculate(BaseCaculate):
       运营能力指标组合方法
       """
     def get_operational_capability_indicators_to_excel(self,period):
+        dic={}
         if len(period) == 1:
             for i in range(4):
                 period.append(str(int(period[i]) - 10000))
@@ -151,10 +162,16 @@ class Calculate(BaseCaculate):
         for i in range(len(period)):
             df.loc[i] =[self.ts_code,period[i],stock_turnover[period[i]],total_asset_turnover[period[i]],accounts_receivable_turnover[period[i]]]
 
+            dic[period[i]] = {
+                'TS股票代码': self.ts_code,
+                '存货周转率': stock_turnover[period[i]],
+                '总资产周转率': total_asset_turnover[period[i]],
+                '应收账款周转率': accounts_receivable_turnover[period[i]]
+            }
         dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}"
         FileTools.make_dir(dir_path)
         df.to_excel(dir_path + os.sep + f"{self.ts_code}#运营能力指标.xlsx")
-
+        return dic
 
     """
     偿债能力指标
@@ -200,6 +217,7 @@ class Calculate(BaseCaculate):
     偿债能力指标组合方法
     """
     def get_solvency_indicators_to_excel(self,period):
+        dic={}
         if len(period) == 1:
             for i in range(4):
                 period.append(str(int(period[i]) - 10000))
@@ -220,11 +238,18 @@ class Calculate(BaseCaculate):
 
         for i in range(len(period)):
             df.loc[i] =[self.ts_code,period[i],liquidity_ratio[period[i]],liquidity_ratio[period[i]],interest_protection[period[i]],debt_to_asset_ratio[period[i]]]
+            dic[period[i]] = {
+                'TS股票代码': self.ts_code,
+                '流动比率': liquidity_ratio[period[i]],
+                '速动比率': quick_ratio[period[i]],
+                '利息保障倍数': interest_protection[period[i]],
+                '资产负债率': debt_to_asset_ratio[period[i]]
+            }
 
         dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}"
         FileTools.make_dir(dir_path)
         df.to_excel(dir_path + os.sep + f"{self.ts_code}#偿债能力指标.xlsx")
-
+        return dic
 
     """
     成长能力指标
@@ -275,6 +300,7 @@ class Calculate(BaseCaculate):
     成长能力指标组合方法
     """
     def get_growth_capacity_indicators_to_excel(self,period):
+        dic={}
         if len(period) == 1:
             for i in range(4):
                 period.append(str(int(period[i]) - 10000))
@@ -291,7 +317,6 @@ class Calculate(BaseCaculate):
         print("net_profit_growth_rate:", net_profit_growth_rate)
 
 
-
         #固定资产增长率
         growth_rate=self.get_growth_rate_of_fixed_assets_to_excel(copy.deepcopy(period))
         print("growth_rate:", growth_rate)
@@ -305,7 +330,17 @@ class Calculate(BaseCaculate):
             df.loc[i] = [self.ts_code, period[i], increase_rate[period[i]], operating_rofit_growth_rate[period[i]],
                          net_profit_growth_rate[period[i]], growth_rate[period[i]],total_asset_growth_rate[period[i]]]
 
+            dic[period[i]] = {
+                'TS股票代码': self.ts_code,
+                '营收增长率': increase_rate[period[i]],
+                '营业利润增长率': operating_rofit_growth_rate[period[i]],
+                '净利润增长率': net_profit_growth_rate[period[i]],
+                '固定资产增长率': growth_rate[period[i]],
+                '总资产增长率': total_asset_growth_rate[period[i]]
+            }
         dir_path = INFO_ANALYES_URL + os.sep + f"{self.ts_code}"
         FileTools.make_dir(dir_path)
         df.to_excel(dir_path + os.sep + f"{self.ts_code}#成长能力指标.xlsx")
+
+        return dic
 
