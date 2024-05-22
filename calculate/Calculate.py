@@ -344,3 +344,36 @@ class Calculate(BaseCaculate):
 
         return dic
 
+    """
+    获取评分表
+    传入参数为一个字典列表
+    字典结构参考 calculate对象方法的返回值
+    """
+    def get_score_to_excel(self,datas):
+        score_dict = {}
+        for data in datas:
+            score = self.get_score_info(data)
+            for date, metrics in data.items():
+                for key, value in metrics.items():
+                    if key != 'TS股票代码':
+                        if key not in score_dict:
+                            score_dict[key] = {'data': [], 'score': score[key]}
+                        score_dict[key]['data'].append(value)
+        cols = list(datas[0].keys())
+        cols.append("评分")
+        rows = list(score_dict.keys())
+
+        print(score_dict)
+        print(cols)
+        print(rows)
+
+        df_data = []
+        for i, value in enumerate(score_dict.values()):
+            df_data.append(value['data'])
+            df_data[i].append(value['score'])
+        print(df_data)
+
+
+
+
+

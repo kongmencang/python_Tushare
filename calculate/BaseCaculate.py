@@ -223,7 +223,7 @@ class BaseCaculate(Company):
     返回值为字典
     如{'存货周转率': 100.0, '总资产周转率': 50.0, '应收账款周转率': 0.0}
     """
-    def get_scire_info(self,data):
+    def get_score_info(self,data):
         num_columns = len(list(data.values())[0]) - 1
         result = [[] for _ in range(num_columns)]
 
