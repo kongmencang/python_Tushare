@@ -1,5 +1,6 @@
 import os
 
+import numpy as np
 import pandas as pd
 from numpy import nan
 
@@ -9,7 +10,9 @@ from tools.FileTools import FileTools
 
 
 class BaseCaculate(Company):
-
+    """
+    包含各种运算规则 生成excel
+    """
 
     """
     （参数1-参数2）/参数1
@@ -29,9 +32,9 @@ class BaseCaculate(Company):
             dic[period[i]] = data;
             df.loc[i] = [self.ts_code, period[i], data]
 
-        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}"
+        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}#{self.name}"
         FileTools.make_dir(dir_path)
-        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{args[0]}.xlsx")
+        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{self.name}#{args[0]}.xlsx")
         return dic
 
     """
@@ -55,9 +58,9 @@ class BaseCaculate(Company):
             dic[period[i]] = data;
 
 
-        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}"
+        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}#{self.name}"
         FileTools.make_dir(dir_path)
-        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{args[0]}.xlsx")
+        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{self.name}#{args[0]}.xlsx")
         return dic
 
 
@@ -82,9 +85,9 @@ class BaseCaculate(Company):
             dic[period[i]] = data;
 
 
-        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}"
+        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}#{self.name}"
         FileTools.make_dir(dir_path)
-        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{args[0]}.xlsx")
+        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{self.name}#{args[0]}.xlsx")
         return dic
 
 
@@ -118,9 +121,9 @@ class BaseCaculate(Company):
             df.loc[i] = [self.ts_code, period[i], data]
             dic[period[i]] = data;
 
-        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}"
+        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}#{self.name}"
         FileTools.make_dir(dir_path)
-        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{args[0]}.xlsx")
+        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{self.name}#{args[0]}.xlsx")
         return dic
 
 
@@ -147,9 +150,9 @@ class BaseCaculate(Company):
             df.loc[i] = [self.ts_code, period[i], data]
             dic[period[i]] = data;
 
-        dir_path = INFO_ANALYES_URL + os.sep + f"{self.ts_code}"
+        dir_path = INFO_ANALYES_URL + os.sep + f"{self.ts_code}#{self.name}"
         FileTools.make_dir(dir_path)
-        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{args[0]}.xlsx")
+        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{self.name}#{args[0]}.xlsx")
         return dic
 
     """
@@ -179,9 +182,9 @@ class BaseCaculate(Company):
             df.loc[i] = [self.ts_code, period[i], data]
             dic[period[i]] = data;
 
-        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}"
+        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}#{self.name}"
         FileTools.make_dir(dir_path)
-        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{args[0]}.xlsx")
+        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{self.name}#{args[0]}.xlsx")
         return dic
 
     """
@@ -211,15 +214,15 @@ class BaseCaculate(Company):
             df.loc[i] = [self.ts_code, period[i], data]
             dic[period[i]] = data;
 
-        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}"
+        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}#{self.name}"
         FileTools.make_dir(dir_path)
-        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{args[0]}.xlsx")
+        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{self.name}#{args[0]}.xlsx")
         return dic
 
 
     """
     评分
-    入参为基本运算返回的字典
+    入参为组合方法返回的字典
     返回值为字典
     如{'存货周转率': 100.0, '总资产周转率': 50.0, '应收账款周转率': 0.0}
     """
@@ -238,7 +241,8 @@ class BaseCaculate(Company):
         for i in result:
             n = 0
             for j in range(len(i) - 1):
-                if i[j] > i[j + 1] or i[j] == nan:
+                #处理特殊值情况
+                if i[j] > i[j + 1] or np.isnan(i[j]) :
                     n = n + 1
             n = n / 4 * 100
             ans.append(n)

@@ -4,7 +4,8 @@ from chart.BaseChart import BaseChart
 
 class Chart(BaseChart):
     #根据字典内容批量生成折线图
-    def get_all_line_chart(self,ts_code,data):
+    def get_all_line_chart(self,ts_code,company_name,data):
+
         #年份
         yearkeys= list(data.keys())
         yearkeys.reverse()
@@ -15,7 +16,7 @@ class Chart(BaseChart):
             d=[]
             for yearkey in yearkeys:
                 d.append(data[yearkey][parameter])
-            self.get_line_chart(ts_code=ts_code,label=parameter,x=years,y=d)
+            self.get_line_chart(ts_code=ts_code,company_name=company_name,label=parameter,x=years,y=d)
 
 
 

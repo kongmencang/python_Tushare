@@ -1,43 +1,105 @@
-from numpy import nan
+import time
+from threading import Thread
+
+from Comparison.BaseComparison import BaseComparison
 from calculate.Calculate import Calculate
 from chart.Chart import Chart
-from config import TOKEN, PERIOD
-
-# 初始化 Calculate 对象
-calculate = Calculate(TOKEN, "600519.SH")
-
-# 获取不同能力指标的数据
-datas = [
-    # #营业能力
-    # calculate.get_profitability_metrics_to_excel(PERIOD),
-    # #运营能力
-    # calculate.get_operational_capability_indicators_to_excel(PERIOD),
-    # 债偿能力
-    calculate.get_solvency_indicators_to_excel(PERIOD),
-    # 成长能力
-    calculate.get_growth_capacity_indicators_to_excel(PERIOD)
-]
-
-calculate.get_score_to_excel(datas)
+from company.Company import Company
+from config import TOKEN, PERIOD, SCORCE_TABLE_NAME, SEAM_INDUSTRY_NUM, INFO_ANALYES_URL, TSCODE
+from tools.PandasDataFormTool import PandasDataFormTool
 
 
+"""
+初始化 要分析的公司Calculate 对象
+"""
+
+self_calculate = Calculate(TOKEN, TSCODE)
+"""
+初始化Chart对象
+"""
+
+chart = Chart()
+"""
+#同类型公司列表获取
+"""
+companys_ts_code = PandasDataFormTool.get_random_col_list(excel_file=self_calculate.get_seam_industry_list(),
+                                                  col_name="ts_code",n=SEAM_INDUSTRY_NUM)
+companys = []
+
+"""获取公司列表"""
+def create_company(ts_code):
+    companys.append(Calculate(ts_code=ts_code, tushare_token=TOKEN))
+
+ths = []
+for ts_code in companys_ts_code:
+    thread = Thread(target=create_company, args=(ts_code,))
+    thread.start()
+    ths.append(thread)
+
+for thread in ths:
+    thread.join()
 
 
-# {'20191231': {'TS股票代码': '600519.SH', '流动比率': 3.8698, '速动比率': 3.2168, '利息保障倍数': 405.2271, '资产负债率': 0.2249},
-#  '20181231': {'TS股票代码': '600519.SH', '流动比率': 3.2485, '速动比率': 2.6668, '利息保障倍数': 376.6166, '资产负债率': 0.2655},
-#  '20171231': {'TS股票代码': '600519.SH', '流动比率': 2.9099, '速动比率': 2.3176, '利息保障倍数': 287.5524, '资产负债率': 0.2867},
-#  '20161231': {'TS股票代码': '600519.SH', '流动比率': 2.436, '速动比率': 1.8507, '利息保障倍数': 197.1641, '资产负债率': 0.3279},
-#  '20151231': {'TS股票代码': '600519.SH', '流动比率': 3.2418, '速动比率': 2.2698, '利息保障倍数': 297.8382, '资产负债率': 0.2325}}
-# {'流动比率': 75.0, '速动比率': 75.0, '利息保障倍数': 75.0, '资产负债率': 25.0}
-# {'20191231': {'TS股票代码': '600519.SH', '营收增长率': 0.1601, '营业利润增长率': 0.1499, '净利润增长率': 0.1623, '固定资产增长率': -0.0068, '总资产增长率': 0.1451},
-#  '20181231': {'TS股票代码': '600519.SH', '营收增长率': 0.2649, '营业利润增长率': 0.3185, '净利润增长率': 0.3042, '固定资产增长率': 0.0003, '总资产增长率': 0.1875},
-#  '20171231': {'TS股票代码': '600519.SH', '营收增长率': 0.4981, '营业利润增长率': 0.6047, '净利润增长率': 0.6177, '固定资产增长率': 0.0547, '总资产增长率': 0.1919},
-#  '20161231': {'TS股票代码': '600519.SH', '营收增长率': 0.1899, '营业利润增长率': 0.0951, '净利润增长率': 0.0897, '固定资产增长率': 0.266, '总资产增长率': 0.3086},
-#  '20151231': {'TS股票代码': '600519.SH', '营收增长率': 0.0344, '营业利润增长率': 0.0025, '净利润增长率': 0.0114, '固定资产增长率': 0.1003, '总资产增长率': 0.3101}}
-# {'营收增长率': 50.0, '营业利润增长率': 50.0, '净利润增长率': 50.0, '固定资产增长率': 25.0, '总资产增长率': 0.0}
+for i in companys:
+    print(i.name)
 
 
 
+def get_company_info(company):
+    company_data = ([
+        # 营业能力
+        company.get_profitability_metrics_to_excel(PERIOD),
+        # 运营能力
+        company.get_operational_capability_indicators_to_excel(PERIOD),
+        # 债偿能力
+        company.get_solvency_indicators_to_excel(PERIOD),
+        # 成长能力
+        company.get_growth_capacity_indicators_to_excel(PERIOD)
+    ])
+    for i in range(len(company_data)):
+        company.get_score_to_excel([company_data[i]], SCORCE_TABLE_NAME[i])
+        if company.ts_code==TSCODE:
+            chart.get_all_line_chart(ts_code=company.ts_code,company_name=company.name,data=company_data[i])
+    company.get_score_to_excel(company_data, "趋势分析综合评分表")
+
+#获取自身的信息
+def get_self_info():
+    get_company_info(company=self_calculate)
 
 
-#{'营收增长率': {'data': [0.1601, 0.2649, 0.4981, 0.1899, 0.0344], 'score': 50.0}, ...}
+#获取同类型公司信息
+def get_seam_industury_companys_info():
+    threads = []
+    for ts_code in companys:
+        company=Calculate(TOKEN,ts_code)
+        thread = Thread(target=get_company_info, args=(company,))
+        threads.append(thread)
+        thread.start()
+        # 等待所有线程完成
+    for thread in threads:
+        thread.join()
+
+
+#获取同类型公司信息
+def get_seam_industury_companys_info():
+
+    threads = []
+    for company in companys:
+        thread = Thread(target=get_company_info, args=(company,))
+        threads.append(thread)
+        thread.start()
+        # 等待所有线程完成
+    for thread in threads:
+        thread.join()
+
+# 多线程执行self_calculate
+self_thread = Thread(target=get_self_info)
+self_thread.start()
+# 多线程执行其他公司信息获取
+get_seam_industury_companys_info()
+# 等待self_thread线程完成
+self_thread.join()
+
+b=BaseComparison(self_calculate)
+
+b.get_comparison_value(dir_path=INFO_ANALYES_URL,companys=companys,comparison_object_name="ROA")

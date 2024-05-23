@@ -1,5 +1,6 @@
 import os
 
+import pandas as pd
 import tushare as ts
 
 from config import INFO_PRIMITIVE_URL
@@ -7,11 +8,18 @@ from tools.FileTools import FileTools
 
 
 class Company():
+    """
+    公司股票类
+    """
     def __init__(self,tushare_token,ts_code):
-
         self.__pro = ts.pro_api(tushare_token)
-        self.ts_code =ts_code;
+        self.ts_code =ts_code
+        self.get_ts_info_to_excel()
+        self.get_base_info_to_excel()
+        print(f"创建股票代码：{self.ts_code} 公司名:{self.fullname} 行业:{self.industry} 对象")
+    #拉取公司基本信息
     def get_base_info_to_excel(self):
+        print(f"获取{self.ts_code} 的公司基本信息")
         df = self.__pro.stock_company(**{
             "ts_code": self.ts_code,
             "exchange": "",
@@ -31,19 +39,59 @@ class Company():
             "website",
             "email",
             "employees",
+            "main_business",
             "introduction",
             "office",
             "ann_date",
-            "business_scope",
-            "main_business"
+            "business_scope"
         ])
-        dir_path = INFO_PRIMITIVE_URL + os.sep + f"{self.ts_code}"
+        dir_path = INFO_PRIMITIVE_URL + os.sep + f"{self.ts_code}#{self.name}"
         FileTools.make_dir(dir_path)
-        df.to_excel( dir_path +os.sep+f"{self.ts_code}#base_info.xlsx")
-        return  dir_path +os.sep+f"{self.ts_code}#base_info.xlsx"
-
+        df.to_excel( dir_path +os.sep+f"{self.ts_code}#{self.name}#公司基本信息.xlsx")
+        return  dir_path +os.sep+f"{self.ts_code}#{self.name}#公司基本信息.xlsx"
+    #拉取股票基本信息
+    def get_ts_info_to_excel(self):
+        print(f"获取{self.ts_code} 的股票基本信息")
+        df = self.__pro.stock_basic(**{
+            "ts_code": self.ts_code,
+            "name": "",
+            "exchange": "",
+            "market": "",
+            "is_hs": "",
+            "list_status": "",
+            "limit": "",
+            "offset": ""
+        }, fields=[
+            "ts_code",
+            "fullname",
+            "symbol",
+            "name",
+            "area",
+            "industry",
+            "enname",
+            "cnspell",
+            "market",
+            "exchange",
+            "curr_type",
+            "list_status",
+            "list_date",
+            "delist_date",
+            "is_hs",
+            "act_name",
+            "act_ent_type"
+        ])
+        self.industry = df['industry'].iloc[0]
+        self.fullname = df['fullname'].iloc[0]
+        self.area = df['area'].iloc[0]
+        self.name = df['name'].iloc[0]
+        dir_path = INFO_PRIMITIVE_URL + os.sep + f"{self.ts_code}#{self.name}"
+        FileTools.make_dir(dir_path)
+        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{self.name}#股票基本信息.xlsx")
+        return dir_path + os.sep + f"{self.ts_code}#{self.name}#股票基本信息.xlsx"
+    #利润表
     def get_profit_info_to_excel(self,ann_date="", f_ann_date="", start_date="", end_date="", period="", report_type="",
                                  comp_type="", is_calc="", limit="", offset=""):
+        print(f"获取{self.ts_code}:{period}:的利润表")
         df = self.__pro.income(**{
             "ts_code": self.ts_code,
             "ann_date": ann_date,
@@ -152,13 +200,14 @@ class Company():
             "oth_income",
             "net_after_nr_lp_correct"
         ])
-        dir_path = INFO_PRIMITIVE_URL + os.sep + f"{self.ts_code}"
+        dir_path = INFO_PRIMITIVE_URL + os.sep + f"{self.ts_code}#{self.name}"
         FileTools.make_dir(dir_path)
-        df.to_excel(dir_path +os.sep + f"{self.ts_code}#{period}#profit_info.xlsx")
-        return dir_path +os.sep + f"{self.ts_code}#{period}#profit_info.xlsx"
-
+        df.to_excel(dir_path +os.sep + f"{self.ts_code}#{self.name}#{period}#利润表.xlsx")
+        return dir_path +os.sep + f"{self.ts_code}#{self.name}#{period}#利润表.xlsx"
+    #负债表
     def get_balance_info_to_excel(self, ann_date="", f_ann_date="", start_date="", end_date="", period="",
                                      report_type="", comp_type="", is_calc="", limit="", offset=""):
+            print(f"获取{self.ts_code}:{period}:的负债表")
             df = self.__pro.balancesheet(**{
                 "ts_code": self.ts_code,
                 "ann_date": ann_date,
@@ -326,8 +375,36 @@ class Company():
                 "update_flag"
             ])
 
-            dir_path =INFO_PRIMITIVE_URL + os.sep + f"{self.ts_code}"
+            dir_path =INFO_PRIMITIVE_URL + os.sep + f"{self.ts_code}#{self.name}"
             FileTools.make_dir(dir_path)
-            df.to_excel(dir_path +os.sep + f"{self.ts_code}#{period}#balance_info.xlsx")
-            return dir_path +os.sep + f"{self.ts_code}#{period}#balance_info.xlsx"
+            df.to_excel(dir_path +os.sep + f"{self.ts_code}#{self.name}#{period}#负债表.xlsx")
+            return dir_path +os.sep + f"{self.ts_code}#{self.name}#{period}#负债表.xlsx"
+
+    #获取同行业股票代码列表
+    def get_seam_industry_list(self):
+        print(f"获取{self.ts_code}:的同行业股票代码列表")
+        df = self.__pro.stock_basic(**{
+            "ts_code": "",
+            "name": "",
+            "exchange": "",
+            "market": '',
+            "is_hs": "",
+            "list_status": "L",
+            "limit": "",
+            "offset": ""
+        }, fields=[
+            "ts_code",
+            "industry",
+            "fullname"
+        ])
+        #筛选
+        df = df[(df['industry'] == self.industry) & (df['ts_code'] != self.ts_code)]
+
+
+        dir_path = INFO_PRIMITIVE_URL + os.sep + f"{self.ts_code}#{self.name}"
+        FileTools.make_dir(dir_path)
+        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{self.name}#同行业公司股票代码表.xlsx")
+        return dir_path + os.sep + f"{self.ts_code}#{self.name}#同行业公司股票代码表.xlsx"
+
+
 
