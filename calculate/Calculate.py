@@ -1,10 +1,17 @@
 import copy
 import os
 
+import numpy as np
+import pandas
+
 from calculate.BaseCaculate import BaseCaculate
 import pandas as pd
-from config import INFO_ANALYES_URL
+
+from chart.Chart import Chart
+from config import INFO_ANALYES_URL, SCORCE_TABLE_NAME
+
 from tools.FileTools import FileTools
+from tools.PandasDataFormTool import PandasDataFormTool
 
 
 class Calculate(BaseCaculate):
@@ -124,9 +131,9 @@ class Calculate(BaseCaculate):
                 'ROA': ROA[period[i]],
                 'EBIT': EBIT[period[i]]
             }
-        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}#{self.name}"
+        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}-{self.name}"
         FileTools.make_dir(dir_path)
-        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{self.name}#营业能力指标.xlsx")
+        df.to_excel(dir_path + os.sep + f"{self.ts_code}-{self.name}-营业能力指标.xlsx")
         print(f"获取完成：{self.ts_code}的营业能力指标报表")
         return indicators
     """
@@ -189,9 +196,9 @@ class Calculate(BaseCaculate):
                 '总资产周转率': total_asset_turnover[period[i]],
                 '应收账款周转率': accounts_receivable_turnover[period[i]]
             }
-        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}#{self.name}"
+        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}-{self.name}"
         FileTools.make_dir(dir_path)
-        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{self.name}#运营能力指标.xlsx")
+        df.to_excel(dir_path + os.sep + f"{self.ts_code}-{self.name}-运营能力指标.xlsx")
         print(f"获取完成：{self.ts_code}的运营能力指标报表")
         return dic
 
@@ -272,9 +279,9 @@ class Calculate(BaseCaculate):
                 '资产负债率': debt_to_asset_ratio[period[i]]
             }
 
-        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}#{self.name}"
+        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}-{self.name}"
         FileTools.make_dir(dir_path)
-        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{self.name}#偿债能力指标.xlsx")
+        df.to_excel(dir_path + os.sep + f"{self.ts_code}-{self.name}-偿债能力指标.xlsx")
         print(f"获取完成：{self.ts_code}的偿债能力指标报表")
         return dic
 
@@ -348,9 +355,9 @@ class Calculate(BaseCaculate):
         operating_rofit_growth_rate = self.get_operating_rofit_growth_rate_to_excel(copy.deepcopy(period))
         # 净利润增长率
         net_profit_growth_rate = self.get_net_profit_growth_rate_to_excel(copy.deepcopy(period))
-        #固定资产增长率
+        # 固定资产增长率
         growth_rate=self.get_growth_rate_of_fixed_assets_to_excel(copy.deepcopy(period))
-        #总资产增长率
+        # 总资产增长率
         total_asset_growth_rate = self.get_total_asset_growth_rate_to_excel(copy.deepcopy(period))
 
 
@@ -366,9 +373,9 @@ class Calculate(BaseCaculate):
                 '固定资产增长率': growth_rate[period[i]],
                 '总资产增长率': total_asset_growth_rate[period[i]]
             }
-        dir_path = INFO_ANALYES_URL + os.sep + f"{self.ts_code}#{self.name}"
+        dir_path = INFO_ANALYES_URL + os.sep + f"{self.ts_code}-{self.name}"
         FileTools.make_dir(dir_path)
-        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{self.name}#成长能力指标.xlsx")
+        df.to_excel(dir_path + os.sep + f"{self.ts_code}-{self.name}-成长能力指标.xlsx")
         print(f"获取完成：{self.ts_code}的成长能力指标报表")
         return dic
 
@@ -378,7 +385,7 @@ class Calculate(BaseCaculate):
     字典结构参考 calculate对象方法的返回值
     """
     def get_score_to_excel(self,datas,df_name):
-        print(f"正在：{self.ts_code}的{df_name}")
+        print(f"正在计算：{self.ts_code}的{df_name}的评分")
         score_dict = {}
         #重构数据结构
         for data in datas:
@@ -400,22 +407,41 @@ class Calculate(BaseCaculate):
             df_data[i].append(value['score'])
 
         df = pd.DataFrame(columns=cols,index=rows,data=df_data)
-        average_score = df['评分'].mean()
-        # 创建总分行
+        average_score = round(df['评分'].mean(),2)
+        #创建总分行
         total_score_row = pd.DataFrame(
             {'20191231': [None], '20181231': [None], '20171231': [None], '20161231': [None], '20151231': [None],
              '评分': [average_score]}, index=['总分']).astype(df.dtypes.to_dict())
 
-        # 将总分行添加到原始DataFrame
+        #将总分行添加到原始DataFrame
         df = pd.concat([df, total_score_row])
 
-        dir_path = INFO_ANALYES_URL + os.sep + f"{self.ts_code}#{self.name}"
+        dir_path = INFO_ANALYES_URL + os.sep + f"{self.ts_code}-{self.name}"
         FileTools.make_dir(dir_path)
-        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{self.name}#{df_name}.xlsx")
-        print(f"获取完成：{self.ts_code}的{df_name}")
-        return dir_path + os.sep + f"{self.ts_code}#{self.name}#{df_name}.xlsx"
+        df.to_excel(dir_path + os.sep + f"{self.ts_code}-{self.name}-{df_name}.xlsx")
+        print(f"计算完成：{self.ts_code}的{df_name}的评分")
+        return dir_path + os.sep + f"{self.ts_code}-{self.name}-{df_name}.xlsx"
+
+ 
 
 
+    """
+    返回值为四个指标的平均得分字典
+    """
+    def get_total_score(self):
+        dic={}
+        for stn in SCORCE_TABLE_NAME:
+            df = PandasDataFormTool.get_df_from_excel_file(dir_path=INFO_ANALYES_URL, ts_code=self.ts_code, table_name=stn)
+            dic[stn]=round(df.iloc[-1]["评分"],2)
+        return dic
 
+    def get_avg_score(self):
+        dic=self.get_total_score()
+        num=round(np.mean(list(dic.values())),2)
+        return num
 
-
+    def get_score_table(self):
+        for stn in SCORCE_TABLE_NAME:
+            df =  PandasDataFormTool.get_df_from_excel_file(dir_path=INFO_ANALYES_URL, ts_code=self.ts_code, table_name=stn)
+            chart =Chart()
+            chart.get_excel_chart(df=df,name=self.name,ts_code=self.ts_code,label=stn)

@@ -32,9 +32,9 @@ class BaseCaculate(Company):
             dic[period[i]] = data;
             df.loc[i] = [self.ts_code, period[i], data]
 
-        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}#{self.name}"
+        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}-{self.name}"
         FileTools.make_dir(dir_path)
-        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{self.name}#{args[0]}.xlsx")
+        df.to_excel(dir_path + os.sep + f"{self.ts_code}-{self.name}-{args[0]}.xlsx")
         return dic
 
     """
@@ -58,9 +58,9 @@ class BaseCaculate(Company):
             dic[period[i]] = data;
 
 
-        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}#{self.name}"
+        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}-{self.name}"
         FileTools.make_dir(dir_path)
-        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{self.name}#{args[0]}.xlsx")
+        df.to_excel(dir_path + os.sep + f"{self.ts_code}-{self.name}-{args[0]}.xlsx")
         return dic
 
 
@@ -85,9 +85,9 @@ class BaseCaculate(Company):
             dic[period[i]] = data;
 
 
-        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}#{self.name}"
+        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}-{self.name}"
         FileTools.make_dir(dir_path)
-        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{self.name}#{args[0]}.xlsx")
+        df.to_excel(dir_path + os.sep + f"{self.ts_code}-{self.name}-{args[0]}.xlsx")
         return dic
 
 
@@ -121,9 +121,9 @@ class BaseCaculate(Company):
             df.loc[i] = [self.ts_code, period[i], data]
             dic[period[i]] = data;
 
-        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}#{self.name}"
+        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}-{self.name}"
         FileTools.make_dir(dir_path)
-        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{self.name}#{args[0]}.xlsx")
+        df.to_excel(dir_path + os.sep + f"{self.ts_code}-{self.name}-{args[0]}.xlsx")
         return dic
 
 
@@ -150,9 +150,9 @@ class BaseCaculate(Company):
             df.loc[i] = [self.ts_code, period[i], data]
             dic[period[i]] = data;
 
-        dir_path = INFO_ANALYES_URL + os.sep + f"{self.ts_code}#{self.name}"
+        dir_path = INFO_ANALYES_URL + os.sep + f"{self.ts_code}-{self.name}"
         FileTools.make_dir(dir_path)
-        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{self.name}#{args[0]}.xlsx")
+        df.to_excel(dir_path + os.sep + f"{self.ts_code}-{self.name}-{args[0]}.xlsx")
         return dic
 
     """
@@ -182,9 +182,9 @@ class BaseCaculate(Company):
             df.loc[i] = [self.ts_code, period[i], data]
             dic[period[i]] = data;
 
-        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}#{self.name}"
+        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}-{self.name}"
         FileTools.make_dir(dir_path)
-        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{self.name}#{args[0]}.xlsx")
+        df.to_excel(dir_path + os.sep + f"{self.ts_code}-{self.name}-{args[0]}.xlsx")
         return dic
 
     """
@@ -214,9 +214,9 @@ class BaseCaculate(Company):
             df.loc[i] = [self.ts_code, period[i], data]
             dic[period[i]] = data;
 
-        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}#{self.name}"
+        dir_path =INFO_ANALYES_URL + os.sep + f"{self.ts_code}-{self.name}"
         FileTools.make_dir(dir_path)
-        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{self.name}#{args[0]}.xlsx")
+        df.to_excel(dir_path + os.sep + f"{self.ts_code}-{self.name}-{args[0]}.xlsx")
         return dic
 
 

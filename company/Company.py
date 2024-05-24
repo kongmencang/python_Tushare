@@ -45,10 +45,11 @@ class Company():
             "ann_date",
             "business_scope"
         ])
-        dir_path = INFO_PRIMITIVE_URL + os.sep + f"{self.ts_code}#{self.name}"
+        self.introduction=df['introduction'].iloc[0]
+        dir_path = INFO_PRIMITIVE_URL + os.sep + f"{self.ts_code}-{self.name}"
         FileTools.make_dir(dir_path)
-        df.to_excel( dir_path +os.sep+f"{self.ts_code}#{self.name}#公司基本信息.xlsx")
-        return  dir_path +os.sep+f"{self.ts_code}#{self.name}#公司基本信息.xlsx"
+        df.to_excel( dir_path +os.sep+f"{self.ts_code}-{self.name}-公司基本信息.xlsx")
+        return  dir_path +os.sep+f"{self.ts_code}-{self.name}-公司基本信息.xlsx"
     #拉取股票基本信息
     def get_ts_info_to_excel(self):
         print(f"获取{self.ts_code} 的股票基本信息")
@@ -84,14 +85,20 @@ class Company():
         self.fullname = df['fullname'].iloc[0]
         self.area = df['area'].iloc[0]
         self.name = df['name'].iloc[0]
-        dir_path = INFO_PRIMITIVE_URL + os.sep + f"{self.ts_code}#{self.name}"
+        dir_path = INFO_PRIMITIVE_URL + os.sep + f"{self.ts_code}-{self.name}"
         FileTools.make_dir(dir_path)
-        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{self.name}#股票基本信息.xlsx")
-        return dir_path + os.sep + f"{self.ts_code}#{self.name}#股票基本信息.xlsx"
+        df.to_excel(dir_path + os.sep + f"{self.ts_code}-{self.name}-股票基本信息.xlsx")
+        return dir_path + os.sep + f"{self.ts_code}-{self.name}-股票基本信息.xlsx"
     #利润表
     def get_profit_info_to_excel(self,ann_date="", f_ann_date="", start_date="", end_date="", period="", report_type="",
                                  comp_type="", is_calc="", limit="", offset=""):
+
         print(f"获取{self.ts_code}:{period}:的利润表")
+        dir_path = INFO_PRIMITIVE_URL + os.sep + f"{self.ts_code}-{self.name}"
+        path=dir_path +os.sep + f"{self.ts_code}-{self.name}-{period}-利润表.xlsx"
+        if FileTools.get_dir_is_exist(path):
+            print("已存在")
+            return path
         df = self.__pro.income(**{
             "ts_code": self.ts_code,
             "ann_date": ann_date,
@@ -200,14 +207,19 @@ class Company():
             "oth_income",
             "net_after_nr_lp_correct"
         ])
-        dir_path = INFO_PRIMITIVE_URL + os.sep + f"{self.ts_code}#{self.name}"
+        dir_path = INFO_PRIMITIVE_URL + os.sep + f"{self.ts_code}-{self.name}"
         FileTools.make_dir(dir_path)
-        df.to_excel(dir_path +os.sep + f"{self.ts_code}#{self.name}#{period}#利润表.xlsx")
-        return dir_path +os.sep + f"{self.ts_code}#{self.name}#{period}#利润表.xlsx"
+        df.to_excel(dir_path +os.sep + f"{self.ts_code}-{self.name}-{period}-利润表.xlsx")
+        return path
     #负债表
     def get_balance_info_to_excel(self, ann_date="", f_ann_date="", start_date="", end_date="", period="",
                                      report_type="", comp_type="", is_calc="", limit="", offset=""):
             print(f"获取{self.ts_code}:{period}:的负债表")
+            dir_path = INFO_PRIMITIVE_URL + os.sep + f"{self.ts_code}-{self.name}"
+            path = dir_path + os.sep + f"{self.ts_code}-{self.name}-{period}-负债表.xlsx"
+            if FileTools.get_dir_is_exist(path):
+                print("已存在")
+                return path
             df = self.__pro.balancesheet(**{
                 "ts_code": self.ts_code,
                 "ann_date": ann_date,
@@ -375,10 +387,10 @@ class Company():
                 "update_flag"
             ])
 
-            dir_path =INFO_PRIMITIVE_URL + os.sep + f"{self.ts_code}#{self.name}"
+            dir_path =INFO_PRIMITIVE_URL + os.sep + f"{self.ts_code}-{self.name}"
             FileTools.make_dir(dir_path)
-            df.to_excel(dir_path +os.sep + f"{self.ts_code}#{self.name}#{period}#负债表.xlsx")
-            return dir_path +os.sep + f"{self.ts_code}#{self.name}#{period}#负债表.xlsx"
+            df.to_excel(dir_path +os.sep + f"{self.ts_code}-{self.name}-{period}-负债表.xlsx")
+            return path
 
     #获取同行业股票代码列表
     def get_seam_industry_list(self):
@@ -401,10 +413,10 @@ class Company():
         df = df[(df['industry'] == self.industry) & (df['ts_code'] != self.ts_code)]
 
 
-        dir_path = INFO_PRIMITIVE_URL + os.sep + f"{self.ts_code}#{self.name}"
+        dir_path = INFO_PRIMITIVE_URL + os.sep + f"{self.ts_code}-{self.name}"
         FileTools.make_dir(dir_path)
-        df.to_excel(dir_path + os.sep + f"{self.ts_code}#{self.name}#同行业公司股票代码表.xlsx")
-        return dir_path + os.sep + f"{self.ts_code}#{self.name}#同行业公司股票代码表.xlsx"
+        df.to_excel(dir_path + os.sep + f"{self.ts_code}-{self.name}-同行业公司股票代码表.xlsx")
+        return dir_path + os.sep + f"{self.ts_code}-{self.name}-同行业公司股票代码表.xlsx"
 
 
 

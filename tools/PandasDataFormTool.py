@@ -2,8 +2,6 @@ import os
 
 import pandas as pd
 
-from config import INFO_ANALYES_URL
-
 
 class PandasDataFormTool(object):
     """
