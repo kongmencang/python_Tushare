@@ -24,7 +24,9 @@ self_calculate = Calculate(TOKEN, TSCODE)
 初始化Chart对象
 """
 chart = Chart()
-#实例化分析类
+"""
+实例化分析类
+"""
 b=BaseComparison(self_calculate)
 
 
@@ -68,13 +70,10 @@ def get_company_info(company):
     company.get_score_to_excel(company_data, "趋势分析综合评分表")
 
 
-
-
 #获取自身的信息
 def get_self_info():
     get_company_info(company=self_calculate)
 #
-
 #获取同类型公司信息
 def get_seam_industury_companys_info():
     threads = []
@@ -86,8 +85,6 @@ def get_seam_industury_companys_info():
         # 等待所有线程完成
     for thread in threads:
         thread.join()
-
-
 #获取同类型公司信息
 def get_seam_industury_companys_info():
 
@@ -99,7 +96,6 @@ def get_seam_industury_companys_info():
         # 等待所有线程完成
     for thread in threads:
         thread.join()
-
 # 多线程执行self_calculate
 self_thread = Thread(target=get_self_info)
 self_thread.start()
@@ -111,9 +107,6 @@ self_thread.join()
 #获取评分表图片
 self_calculate.get_score_table()
 
-#
-#
-#
 comparison_totle_sc={}#综合评分对比
 comparison_sc={} #常规参数
 for analyes_argument in ANALYES_ARGUMENT.keys():
@@ -123,8 +116,6 @@ for analyes_argument in ANALYES_ARGUMENT.keys():
         #细分项
         s1=b.get_comparison_to_cart(dir_path=INFO_ANALYES_URL,companys=companys,comparison_object_name=argument)
         comparison_sc[argument]=s1
-
-
 
 #获取综合评分（总体）的图片
 sc=b.get_totle_scorce_cart(companys)

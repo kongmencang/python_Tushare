@@ -247,7 +247,6 @@ class Calculate(BaseCaculate):
                 total_asset_turnover[period[i]],
                 accounts_receivable_turnover[period[i]],
             ]
-
             dic[period[i]] = {
                 "TS股票代码": self.ts_code,
                 "存货周转率": stock_turnover[period[i]],
@@ -530,7 +529,6 @@ class Calculate(BaseCaculate):
         cols = list(datas[0].keys())
         cols.append("评分")
         rows = list(score_dict.keys())
-
         df_data = []
         for i, value in enumerate(score_dict.values()):
             df_data.append(value["data"])
@@ -539,17 +537,6 @@ class Calculate(BaseCaculate):
         df = pd.DataFrame(columns=cols, index=rows, data=df_data)
         average_score = round(df["评分"].mean(), 2)
         # 创建总分行
-        # total_score_row = pd.DataFrame(
-        #     {
-        #         "20191231": [None],
-        #         "20181231": [None],
-        #         "20171231": [None],
-        #         "20161231": [None],
-        #         "20151231": [None],
-        #         "评分": [average_score],
-        #     },
-        #     index=["总分"],
-        # ).astype(df.dtypes.to_dict())
         if len(PERIOD) == 1:
             end_date = PERIOD.strptime(PERIOD[0], "%Y%m%d")
             columns = [(end_date.replace(year=end_date.year - i)).strftime("%Y%m%d") for i in range(5)]

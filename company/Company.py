@@ -437,6 +437,7 @@ class Company:
         df.to_excel(
             dir_path + os.sep + f"{self.ts_code}-{self.name}-{period}-负债表.xlsx"
         )
+        time.sleep(SLEEP_TIME)
         return path
 
     # 获取同行业股票代码列表

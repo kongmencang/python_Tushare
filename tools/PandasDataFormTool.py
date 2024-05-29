@@ -25,9 +25,9 @@ class PandasDataFormTool(object):
         return random_ts_codes.tolist()
 
     """
-    根据目录文件名查找文件
+    根据目录文件名返回pd
     dir_path 根目录
-    根目录下包含名称ts—_code 的目录下 包含 table_name 的xlsx文件
+    根目录下包含名称ts—_code 的目录下 包含 table_name 的xlsx文件并转换成pandas表格
     """
 
     @classmethod
