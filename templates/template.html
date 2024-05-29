@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ company_name }}财务分析报告</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            color: #333;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .info-item {
+            padding: 10px;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+            background: #fafafa;
+        }
+
+        .info-item strong {
+            display: inline-block;
+            width: 150px;
+            color: #555;
+        }
+
+        .info-item span {
+            color: #000;
+        }
+
+        .indicator,
+        .score,
+        .comparison {
+            margin-bottom: 20px;
+        }
+
+        .indicator img,
+        .score img,
+        .comparison img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .indicator p,
+        .score p,
+        .comparison p {
+            background: #f9f9f9;
+            padding: 10px;
+            border-left: 3px solid #4CAF50;
+            margin: 0;
+        }
+
+        .total-score {
+            background: #f0f0f0;
+            padding: 20px;
+            border-left: 5px solid #2196F3;
+        }
+
+        .highlight-title {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>{{ company_name }}财务分析报告</h1>
+
+        <div class="section">
+            <h2>公司信息展示</h2>
+            <div class="info-item">
+                <strong>公司全称:</strong> <span>{{ company_full_name }}</span>
+            </div>
+            <div class="info-item">
+                <strong>公司简介:</strong> <span>{{ company_introduction }}</span>
+            </div>
+            <div class="info-item">
+                <strong>股票代码:</strong> <span>{{ company_ts_code }}</span>
+            </div>
+            <div class="info-item">
+                <strong class="highlight-title">所属行业:</strong> <span>{{ company_industry }}</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>参数指标展示</h2>
+            {% for ability, indicators in parameters.items() %}
+            <div class="indicator">
+                <h3>{{ ability }}</h3>
+                {% for indicator in indicators %}
+                <div>
+                    <h4>{{ indicator }}</h4>
+                    <img src="{{ indicator_images[ability][indicator] }}" alt="{{ indicator }}图表">
+                    <p>{{company_name}}的{{indicator}}指标:{{ indicator_comments[ability][indicator] }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+
+
+        <div class="section">
+            <h2>评分展示</h2>
+            {% for ability, score_image in scores.items() %}
+            <div class="score">
+                <h3>{{ ability }}评分图</h3>
+                <img src="{{ score_image }}" alt="{{ ability }}评分图">
+                <p>{{ score_comments[ability] }}</p>
+            </div>
+            {% endfor %}
+            <div class="total-score">
+                <h3>总分</h3>
+                <p>{{ total_score }}</p>
+                <p>{{ total_score_comment }}</p>
+            </div>
+        </div>
+
+
+        <div class="section">
+            <h2>同行业展示对比</h2>
+            {% for ability, comparison_score_image in comparison_scores.items() %}
+            <div class="comparison">
+                <h3>{{ ability }}对比图</h3>
+                <img src="{{ comparison_score_image }}" alt="{{ ability }}对比图">
+                <p>该公司的{{ability}}{{ comparison_score_comments[ability] }}</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="section">
+            <h2>综合评分对比</h2>
+            {% for ability, comparison_totle_score_image in comparison_totle_scores.items() %}
+            <div class="comparison">
+                <h3>{{ ability }}评分对比图</h3>
+                <img src="{{ comparison_totle_score_image }}" alt="{{ ability }}评分图">
+                <p>该公司的{{ability}}{{ comparison_totle_score_comments[ability] }}</p>
+            </div>
+            {% endfor %}
+            <h3>综合评分对比</h3>
+            <div>
+                <img src="{{totle_img}}" alt="综合评分对比图">
+                <p>{{company_full_name}}的综合评分 {{ totle_comment }}</p>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+
+</html>
